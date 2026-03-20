@@ -1,4 +1,6 @@
-### A/B Test Design Overview
+## A/B Test Design 
+
+### Overview
 This document outlines the design, methodology, and evaluation framework for an A/B test comparing the performance of a model using a Machine Learning based momentum signal against a baseline model trading across 15-minute BTC/ETH/XRP/SOL cryptocurrency UP/DOWN prediction markets.
 
 The two models trade binary contracts (YES or NO) on whether the price of each asset will be UP or DOWN over a 15-minute window from the opening spot price.  
@@ -8,6 +10,8 @@ Performance is evaluated across two primary metrics:
 - Hit rate accuracy
 
 The results of the A/B test will complement the results of Monte Carlo simulations stress testing trading the signal in practice. A/B test will determine if there is a statistically significant edge, while Monte Carlo allows us to visualize PnL distributions and drawdowns in realistic simulations.
+
+---
 
 ### Hypothesis Tests
 The purpose of this experiment is to determine whether incorporating a momentum signal derived using machine learning and lagged features improve the profitability and predictive accuracy of trades relative to a baseline strategy. 
@@ -22,24 +26,46 @@ $$\mu_{\text{PnL}}= \frac{1}{N}\sum^N_{i=1}{\text{PnL}_i}$$
 - Statistical Test: **Welch's t-Test for Two Means (One-Tailed)** 
 	- Why? Student's t-test assumes equal variances. We cannot assume that the PnL variance of the prediction model is the same as the baseline model. In fact, we hope they are different because they're trading different sessions, entry prices, and momentums. Welch's t-test allows us to test two means with unequal variances. CLT helps with large samples.
 
-$$H_0: \mu_{\text{model}} = \mu_{\text{baseline}}$$
-$$H_A: \mu_{\text{model}} > \mu_{\text{baseline}}$$
-$$t = \frac{\overline{x}_{\text{model}} - \overline{x}_{\text{baseline}}}{\sqrt{\frac{s^2_{\text{model}}}{n_{\text{model}}} +\frac{s^2_{\text{baseline}}}{n_{\text{baseline}}}}}$$
+$$
+H_0: \mu_{\text{model}} = \mu_{\text{baseline}}
+$$
+
+$$
+H_A: \mu_{\text{model}} > \mu_{\text{baseline}}
+$$
+
+$$
+t = \frac{\overline{x}_{\text{model}} - \overline{x}_{\text{baseline}}}{\sqrt{\frac{s^2_{\text{model}}}{n_{\text{model}}} +\frac{s^2_{\text{baseline}}}{n_{\text{baseline}}}}}
+$$
 
 **Hypothesis Test #2: Hit Rate Accuracy**
 Determine whether the prediction model with momentum predicts direction more accurately than the baseline model without momentum:
+
 $$\text{Hit Rate} = \text{Accuracy} = \frac{\text{Number of correct predictions}}{\text{Total number of predictions (N)}}$$
-- Statistical Test: **Two-Proportion Z-Test (One-Tailed)
+
+- Statistical Test: **Two-Proportion Z-Test (One-Tailed)**
 	- Why? Hit rate is a proportion and we're comparing two independent groups with a decent sample size. Z-test is more natural for a one-tailed test because we get a signed test statistic compared to a Chi-Squared Test that is always positive.
-$$H_0: p_{\text{model}} = p_{\text{baseline}}$$
-$$H_A: p_{\text{model}} > p_{\text{baseline}}$$
-$$z=\frac{\hat{p}_{\text{model}}-\hat{p}_{\text{baseline}}}{\sqrt{\hat{p}(1-\hat{p} )(\frac{1}{n_{\text{model}}} +\frac{1}{n_{\text{baseline}}})}}\quad \hat{p} \text{ is the pooled proportion}$$
+
+$$
+H_0: p_{\text{model}} = p_{\text{baseline}}
+$$
+
+$$
+H_A: p_{\text{model}} > p_{\text{baseline}}
+$$
+
+$$
+z=\frac{\hat{p}_{\text{model}}-\hat{p}_{\text{baseline}}}{\sqrt{\hat{p}(1-\hat{p} )(\frac{1}{n_{\text{model}}} +\frac{1}{n_{\text{baseline}}})}}\quad \hat{p} \text{ is the pooled proportion}
+$$
+
 
 **Why one-tailed?** Our hypothesis is directional because we're asking if our prediction model with momentum is better than the baseline model without momentum. One-tail concentrates all of the $\alpha$ in one tail, giving us more power to detect an effect. The tradeoff is that we can't determine if the prediction model is *significantly worse* which is acceptable (we just won't use the model). 
 
 **Why two tests?** Hit rate and PnL should both be evaluated because a high hit rate does not translate to a positive PnL, and vice-versa. The hypothesis tests will allow us to evaluate profitability metrics and directional prediction accuracy together, which matters in practice.
 
 **Multiple Comparisons?** We'll be running 10 tests total, 2 metrics across 4 assets, plus the total composite. We'll use Bonferroni correction to bring $\alpha$ down from $0.05/10$ to $0.005$ per test. 
+
+---
 
 ### Experimental Design and Data Collection
 Both models will enter a trade if all of the following conditions are met:
@@ -69,6 +95,8 @@ The following information will be recorded for every trade:
 - Resolution Outcome (WIN/LOSE)
 - PnL Per Contract
 
+---
+
 ### Sample Size Calculation
 Define the following statistical terms:
 - $\alpha =0.05$ ($z_{1-\alpha/2}=1.96$)
@@ -87,6 +115,8 @@ Sample size for a Welch's t-Test for Two Means (with +0.05 lift) is **2,628 trad
 $$
 n=\frac{(s^2_1 +s^2_2)(z_{1-\alpha/2}+z_{power})^2}{\delta^2}=2,628
 $$
+
+---
 
 ### Metrics to Report
 - Mean PnL
