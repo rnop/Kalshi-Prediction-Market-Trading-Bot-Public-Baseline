@@ -1,0 +1,7 @@
+duckdb==1.4.4
+requests==2.32.5
+cryptography==46.0.5
+python-dotenv==1.2.1
+matplotlib==3.10.7
+pandas==2.3.3
+numpy==2.3.5
