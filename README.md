@@ -2,7 +2,9 @@
 
 This project showcases a simple trading model that trades Kalshi 15-minute cryptocurrency prediction markets using a simple RSI signal and an entry-zone filter. It is designed as a backbone skeleton example to build actual strategies on. I am using this naive trading model as one of many baselines against my actual trading strategy. 
 
-**Note**: This is a LIVE trading bot (with paper trading capabilities) that is able to place orders. Be sure to read the instructions carefully and run the correct flags. Use at your own risk. 
+**Note**: This is a LIVE trading bot (with paper trading capabilities) that is able to place orders. Be sure to read the instructions carefully and run the correct flags. Use at your own risk.
+
+Working as of **03/19/2026**.
 
 ### Overview
 - Ingests real-time Kalshi 15-minute crypto markets (BTC, ETH, SOL, XRP) via websocket API.
